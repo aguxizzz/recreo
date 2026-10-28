@@ -1,4 +1,5 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { Redirect } from 'expo-router';
 import { Tabs, type BottomTabBarProps } from 'expo-router/tabs';
 import { useEffect, useState, type ComponentProps } from 'react';
 import { Easing as RNEasing, Pressable, StyleSheet, View } from 'react-native';
@@ -13,6 +14,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { Colors, Fonts, Radius } from '@/constants/theme';
+import { useProgress } from '@/state/progress';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
 
@@ -23,6 +25,9 @@ const TAB_META: Record<string, { label: string; icon: IconName; color: string }>
 };
 
 export default function TabsLayout() {
+  const { state } = useProgress();
+  if (!state.onboarded) return <Redirect href="/bienvenida" />;
+
   return (
     <Tabs
       screenOptions={{
