@@ -22,6 +22,30 @@ export default function ReviewScreen() {
   const growing = statuses.filter((c) => c.level === 'firm' || c.level === 'learning').length;
   const reviewedToday = state.activity[dayKey()]?.reviews ?? 0;
   const minutes = Math.max(1, Math.round(reviewToday * MINUTES_PER_CONCEPT));
+  const today = dayKey();
+  const records = Object.values(state.concepts);
+  const nextDueIn = Math.min(...records.map((r) => daysBetween(today, r.due)).filter((d) => d > 0));
+  const started = records.length > 0;
+
+  const heading = reviewToday
+    ? `${reviewToday} ${reviewToday === 1 ? 'tema' : 'temas'} para hoy`
+    : !started
+      ? 'Todavía no hay nada para repasar'
+      : reviewedToday
+        ? 'Repaso de hoy hecho'
+        : '¡Todo al día!';
+  const caption = reviewToday
+    ? `Unos ${minutes} min. Cada tema vuelve con otro fragmento de código.`
+    : !started
+      ? 'Los temas que veas en las lecciones van a aparecer acá, justo antes de que se te olviden.'
+      : 'Cada tema vuelve cuando está por olvidarse: primero al día, después a los 3, 7, 16 y 35 días.';
+  const idleButton = !started
+    ? 'Ir a la primera lección'
+    : nextDueIn === 1
+      ? 'El próximo tema vuelve mañana'
+      : Number.isFinite(nextDueIn)
+        ? `El próximo tema vuelve en ${nextDueIn} días`
+        : 'Nada para repasar';
 
   return (
     <View style={[styles.screen, { paddingTop: insets.top }]}>
@@ -30,20 +54,10 @@ export default function ReviewScreen() {
           <AppText variant="title">Repaso</AppText>
 
           <View style={styles.hero}>
-            <Mascot mood={reviewToday ? 'think' : 'cheer'} size={110} />
+            <Mascot mood={reviewToday ? 'think' : started ? 'cheer' : 'happy'} size={110} />
             <View style={styles.heroText}>
-              <AppText variant="heading">
-                {reviewToday
-                  ? `${reviewToday} ${reviewToday === 1 ? 'tema' : 'temas'} para hoy`
-                  : reviewedToday
-                    ? 'Repaso de hoy hecho'
-                    : '¡Todo al día!'}
-              </AppText>
-              <AppText variant="caption">
-                {reviewToday
-                  ? `Unos ${minutes} min. Cada tema vuelve con otro fragmento de código.`
-                  : 'Cada tema vuelve cuando está por olvidarse: primero al día, después a los 3, 7, 16 y 35 días.'}
-              </AppText>
+              <AppText variant="heading">{heading}</AppText>
+              <AppText variant="caption">{caption}</AppText>
             </View>
           </View>
 
@@ -57,9 +71,9 @@ export default function ReviewScreen() {
           ) : null}
 
           <ChunkyButton
-            title={reviewToday ? 'Hacer mi repaso' : 'Nada para repasar'}
-            disabled={!reviewToday}
-            onPress={() => router.push('/leccion/repaso')}
+            title={reviewToday ? 'Hacer mi repaso' : idleButton}
+            disabled={!reviewToday && started}
+            onPress={() => (reviewToday ? router.push('/leccion/repaso') : router.navigate('/'))}
           />
 
           <View style={styles.section}>
