@@ -53,7 +53,7 @@ export function LessonPopover({ lesson, position, state, color, top, arrowX, onS
       {!locked ? (
         <ChunkyButton tone="neutral" onPress={onStart} style={styles.button} contentStyle={styles.buttonFace}>
           <AppText style={[styles.buttonText, { color: color[0] }]}>
-            {state === 'done' ? 'Practicar +5 XP' : 'Empezar +10 XP'}
+            {state === 'done' ? 'Practicar de nuevo' : 'Empezar'}
           </AppText>
         </ChunkyButton>
       ) : null}
