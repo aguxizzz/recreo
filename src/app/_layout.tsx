@@ -15,6 +15,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import Animated, { FadeIn } from 'react-native-reanimated';
 
 import { Colors } from '@/constants/theme';
 import { ProgressProvider, useProgress } from '@/state/progress';
@@ -52,11 +53,20 @@ function AppStack() {
   const { ready } = useProgress();
 
   useEffect(() => {
-    if (ready) SplashScreen.hideAsync();
+    if (ready) SplashScreen.hide();
   }, [ready]);
 
   if (!ready) return null;
 
+  return (
+    // El splash tiene el mismo fondo, así que basta con que el contenido aparezca con un fundido.
+    <Animated.View entering={FadeIn.duration(260)} style={{ flex: 1 }}>
+      <AppRoutes />
+    </Animated.View>
+  );
+}
+
+function AppRoutes() {
   return (
     <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: Colors.background } }}>
       <Stack.Screen name="(tabs)" />
