@@ -2,7 +2,7 @@
 
 App Android para practicar **lectura de código**, con lecciones cortas estilo Duolingo.
 
-**Stack:** React Native + Expo (SDK 58), TypeScript, Expo Router, Reanimated, react-native-svg
+**Stack:** React Native + Expo (SDK 58), TypeScript, Expo Router, Reanimated, react-native-svg  
 **Plataforma:** Android ([descargar APK](https://github.com/aguxizzz/recreo/releases/latest)); corre también en iOS y web
 
 <p>
