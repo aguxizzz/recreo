@@ -1,5 +1,5 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import type { ComponentProps } from 'react';
+import { useState, type ComponentProps } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -20,6 +20,7 @@ export default function ProfileScreen() {
   const avgAccuracy = records.length ? records.reduce((sum, r) => sum + r.accuracy, 0) / records.length : 0;
   const statuses = conceptStatuses(state.concepts);
   const mastered = statuses.filter((c) => c.level === 'mastered').length;
+  const [confirmReset, setConfirmReset] = useState(false);
 
   const week = Array.from({ length: 7 }, (_, i) => {
     const d = new Date();
@@ -107,7 +108,16 @@ export default function ProfileScreen() {
             </View>
           </View>
 
-          <ChunkyButton title="Reiniciar progreso" tone="neutral" onPress={reset} />
+          {/* Dos toques para no borrar todo por accidente. */}
+          <ChunkyButton
+            title={confirmReset ? 'Tocá de nuevo para borrar todo' : 'Reiniciar progreso'}
+            tone={confirmReset ? 'wrong' : 'neutral'}
+            onPress={() => {
+              if (!confirmReset) return setConfirmReset(true);
+              setConfirmReset(false);
+              reset();
+            }}
+          />
         </View>
       </ScrollView>
     </View>
