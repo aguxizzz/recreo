@@ -33,6 +33,7 @@ export default function ProfileScreen() {
     };
   });
   const maxExercises = Math.max(10, ...week.map((w) => w.exercises));
+  const quietWeek = week.every((d) => !d.exercises && !d.frozen);
 
   return (
     <View style={[styles.screen, { paddingTop: insets.top }]}>
@@ -52,7 +53,7 @@ export default function ProfileScreen() {
             <StatCard icon="flame" color={Colors.streak} value={String(currentStreak)} label="Días de racha" />
             <StatCard icon="ribbon" color={Colors.correct} value={`${mastered}/${statuses.length}`} label="Temas dominados" />
             <StatCard icon="checkmark-done" color={Colors.primary} value={String(records.length)} label="Lecciones" />
-            <StatCard icon="locate" color="#4DA8FF" value={`${Math.round(avgAccuracy * 100)}%`} label="Precisión" />
+            <StatCard icon="locate" color="#4DA8FF" value={records.length ? `${Math.round(avgAccuracy * 100)}%` : '–'} label="Precisión" />
           </View>
 
           <View style={styles.card}>
@@ -84,6 +85,9 @@ export default function ProfileScreen() {
 
           <View style={styles.card}>
             <AppText variant="heading">Ejercicios esta semana</AppText>
+            {quietWeek ? (
+              <AppText variant="caption">Todavía no practicaste esta semana. Cada ejercicio que hagas suma una barra.</AppText>
+            ) : null}
             <View style={styles.chart}>
               {week.map((d, i) => (
                 <View key={i} style={styles.barCol}>
