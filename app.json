@@ -16,7 +16,8 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.aguxis.recreo"
+      "package": "com.aguxis.recreo",
+      "versionCode": 1
     },
     "web": {
       "output": "static",
@@ -37,6 +38,12 @@
       "typedRoutes": true,
       "reactCompiler": true
     },
-    "backgroundColor": "#0E1A1D"
+    "backgroundColor": "#0E1A1D",
+    "extra": {
+      "eas": {
+        "projectId": "71dc3dcd-5df1-4487-b987-0ef6b74596cc"
+      }
+    },
+    "owner": "aguxis"
   }
 }
