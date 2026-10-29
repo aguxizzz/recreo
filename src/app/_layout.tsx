@@ -70,6 +70,7 @@ function AppRoutes() {
   return (
     <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: Colors.background } }}>
       <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="bienvenida" options={{ animation: 'fade', animationDuration: 220 }} />
       <Stack.Screen
         name="leccion/[id]"
         // Fundido corto; el leve desplazamiento hacia la izquierda lo hace la propia pantalla.

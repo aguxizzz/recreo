@@ -31,6 +31,8 @@ export type ProgressState = {
   activity: Record<string, DayActivity>;
   completed: Record<string, LessonRecord>;
   concepts: Record<string, ConceptRecord>;
+  /** Ya vio la bienvenida (o la salteó). */
+  onboarded: boolean;
 };
 
 const initialState: ProgressState = {
@@ -40,6 +42,7 @@ const initialState: ProgressState = {
   activity: {},
   completed: {},
   concepts: {},
+  onboarded: false,
 };
 
 export type ExerciseOutcome = {
@@ -160,12 +163,14 @@ function migrate(legacy: LegacyState): ProgressState {
     lastActiveDay: legacy.lastActiveDay ?? null,
     completed: legacy.completed ?? {},
     concepts,
+    onboarded: true,
   };
 }
 
 async function load(): Promise<ProgressState | null> {
   const raw = await AsyncStorage.getItem(STORAGE_KEY);
-  if (raw) return { ...initialState, ...JSON.parse(raw) };
+  // Quien ya tenía progreso guardado antes de que existiera la bienvenida no la necesita.
+  if (raw) return { ...initialState, onboarded: true, ...JSON.parse(raw) };
   const legacy = await AsyncStorage.getItem(LEGACY_KEY);
   return legacy ? migrate(JSON.parse(legacy)) : null;
 }
@@ -184,6 +189,7 @@ type ProgressContextValue = {
   reviewToday: number;
   reviewOverflow: number;
   recordSession: (result: SessionResult) => void;
+  finishOnboarding: () => void;
   reset: () => void;
 };
 
@@ -208,6 +214,8 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     setState((s) => applySession(s, result));
   }, []);
 
+  const finishOnboarding = useCallback(() => setState((s) => ({ ...s, onboarded: true })), []);
+
   const reset = useCallback(() => setState(initialState), []);
 
   const value = useMemo<ProgressContextValue>(() => {
@@ -229,9 +237,10 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       reviewToday: Math.min(due, slots),
       reviewOverflow: Math.max(0, due - slots),
       recordSession,
+      finishOnboarding,
       reset,
     };
-  }, [state, ready, recordSession, reset]);
+  }, [state, ready, recordSession, finishOnboarding, reset]);
 
   return <ProgressContext.Provider value={value}>{children}</ProgressContext.Provider>;
 }
